@@ -6,8 +6,8 @@ class Solution {
             arr[i % 3]++;
         }
         if(arr[0] % 2 == 0){
-            return arr[1] > 0 && arr[2] > 0;
+            return arr[1] > 0 && arr[2] > 0 ? true : false;
         }
-        return Math.abs(arr[1] - arr[2]) > 2;
+        return Math.abs(arr[1] - arr[2]) > 2 ? true : false;
     }
 }
