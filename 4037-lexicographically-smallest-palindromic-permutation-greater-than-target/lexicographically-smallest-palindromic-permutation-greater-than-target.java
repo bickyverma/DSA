@@ -1,8 +1,7 @@
 class Solution {
     public String isPossible(int n, int[] freqIn, String cur, char mid, String target){
-        int[] freq = freqIn.clone(); // copy, since C++ passes freq by value here
+        int[] freq = freqIn.clone(); 
 
-        // build the largest possible arrangement of remaining chars (descending order)
         for(int i=25; i>=0; i--){
             while(freq[i] > 0){
                 cur += (char)('a'+i);
@@ -11,20 +10,19 @@ class Solution {
         }
 
         if(mid!='#'){
-            // odd-length palindrome: left half + mid + reverse(left half)
+            
             String temp = cur;
             cur += mid;
             temp = new StringBuilder(temp).reverse().toString();
             cur += temp;
         }
         else {
-            // even-length palindrome: left half + reverse(left half)
             String temp = cur;
             temp = new StringBuilder(temp).reverse().toString();
             cur += temp;
         }
 
-        // feasibility check: only valid if this (largest possible) candidate beats target
+       
         return cur.compareTo(target) > 0 ? cur : "";
     }
 
@@ -46,28 +44,27 @@ class Solution {
 
         for(int i=0; i<26; i++){
             if(freq[i]%2 != 0){
-                // odd count -> this becomes the middle character
                 mid = (char)('a'+i);
                 freq[i]--;
                 oddCount++;
             }
 
-            freq[i] /= 2; // each char used freq[i]/2 times in the left half
+            freq[i] /= 2; 
 
-            if(oddCount>=2) return ""; // more than one odd-frequency char -> can't form a palindrome
+            if(oddCount>=2) return ""; 
         }
 
-        n /= 2; // we only need to construct the left half now
+        n /= 2; 
 
         String res = "", prefix = "";
 
-        // greedily build the left half, position by position
+        
         for(int i=0; i<n; i++){
 
             String cur = prefix;
             boolean isThereAny = false;
 
-            // try smallest character first ('a' -> 'z')
+          
             for(int j=0; j<26; j++){
 
                 if(freq[j] > 0){
@@ -75,29 +72,28 @@ class Solution {
                     freq[j]--;
                     cur += (char)('a'+j);
 
-                    // check if this prefix can still lead to a palindrome > target
+                    
                     String isPos = isPossible(n, freq, cur, mid, target);
 
                     if(!isPos.equals("")){
-                        prefix = cur;      // keep this character, lock in the prefix
+                        prefix = cur;     
                         isThereAny = true;
 
                         if(res.equals(""))
                             res = isPos;
                         else
-                            res = res.compareTo(isPos) < 0 ? res : isPos; // track smallest valid candidate
+                            res = res.compareTo(isPos) < 0 ? res : isPos; 
 
                         break;
                     }
 
-                    // this character doesn't work, undo and try the next one
                     freq[j]++;
                     cur = cur.substring(0, cur.length()-1);
                 }
             }
 
             if(!isThereAny)
-                return ""; // no character works at this position -> impossible
+                return "";
         }
 
         return res; 
