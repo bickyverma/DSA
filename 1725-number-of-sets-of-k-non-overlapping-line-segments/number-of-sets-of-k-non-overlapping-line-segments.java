@@ -1,4 +1,3 @@
-
 class Solution {
     public int numberOfSets(int n, int k) {
         final int mod = 1000000007;
