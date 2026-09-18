@@ -36,7 +36,6 @@ class Solution {
             if (a[0] != b[0]) return Integer.compare(a[0], b[0]);
             return Integer.compare(a[1], b[1]);
         });
-
         List<String> ans = new ArrayList<>();
         int prevEnd = -1;
 
@@ -47,7 +46,6 @@ class Solution {
                 prevEnd = r;
             }
         }
-
         return ans;
     }
 }
