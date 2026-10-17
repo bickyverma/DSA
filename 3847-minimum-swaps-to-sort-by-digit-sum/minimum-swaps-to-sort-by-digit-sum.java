@@ -1,69 +1,55 @@
-class Info {
-    private final int sum;
-    private final int org;
-    private final int idx;
-
-    public Info(int sum, int org, int idx) {
-        this.sum = sum;
-        this.org = org;
-        this.idx = idx;
-    }
-
-    public int getSum() { return this.sum; }
-    public int getOrg() { return this.org; }
-    public int getIdx() { return this.idx; }
-}
-
 class Solution {
     public int minSwaps(int[] nums) {
         int n = nums.length;
-        List<Info> info = new ArrayList<>();
-        Map<Integer, Integer> map = new HashMap<>();
-
+        
+        // Create array of indices paired with values
+        Integer[] indices = new Integer[n];
         for (int i = 0; i < n; i++) {
-            int sum = findSum(nums[i]);
-            info.add(new Info(sum, nums[i], i));
+            indices[i] = i;
         }
-
-        info.sort((a, b) -> {
-            if (a.getSum() == b.getSum()) {
-                return Integer.compare(a.getOrg(), b.getOrg());
+        
+        // Sort indices based on digit sum, then value
+        java.util.Arrays.sort(indices, (a, b) -> {
+            int sumA = digitSum(nums[a]);
+            int sumB = digitSum(nums[b]);
+            if (sumA != sumB) {
+                return sumA - sumB;
             }
-            return Integer.compare(a.getSum(), b.getSum());
+            return nums[a] - nums[b];
         });
-
-        // Original index -> destination index
-        for (int i = 0; i < n; i++) {
-            Info in = info.get(i);
-            map.put(in.getIdx(), i);
+        
+        // Build the target position mapping
+        // position[i] = where element originally at index i should go
+        int[] targetPos = new int[n];
+        for (int newPos = 0; newPos < n; newPos++) {
+            int originalIndex = indices[newPos];
+            targetPos[originalIndex] = newPos;
         }
-
+        
+        // Count cycles in the permutation
         boolean[] visited = new boolean[n];
-        int swaps = 0;
-
+        int cycles = 0;
+        
         for (int i = 0; i < n; i++) {
-            if (visited[i]) continue;
-
-            int curr = i;
-            int cycleSize = 0;
-            while (!visited[curr]) {
-                visited[curr] = true;
-                curr = map.get(curr);
-                cycleSize++;
-            }
-
-            if (cycleSize > 1) {
-                swaps += cycleSize - 1;
+            if (!visited[i]) {
+                cycles++;
+                int j = i;
+                while (!visited[j]) {
+                    visited[j] = true;
+                    j = targetPos[j];
+                }
             }
         }
-        return swaps;
+        
+        return n - cycles;
     }
-
-    private int findSum(int n) {
+    
+    private int digitSum(int num) {
         int sum = 0;
-        while (n > 0) {
-            sum += n % 10;
-            n /= 10;
+        num = Math.abs(num);
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
         }
         return sum;
     }
